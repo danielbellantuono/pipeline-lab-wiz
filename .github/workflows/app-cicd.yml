@@ -56,7 +56,7 @@ jobs:
           sed -i 's|image: .*|image: ${{ secrets.DOCKERHUB_USERNAME }}/wiz-todo-app:${{ github.sha }}|g' k8s/todo-app-manifest.yaml
           
           # Applica i manifesti (Deployment, ServiceAccount con ClusterAdmin, Ingress)
-          kubectl apply -f k8s/todo-app-manifest.yaml
+          kubectl apply -f k8s/wiz-app-manifest.yaml
           
           # Forza Kubernetes ad attendere che il rollout del nuovo container sia completato
           kubectl rollout status deployment/todo-web-app --timeout=60s
