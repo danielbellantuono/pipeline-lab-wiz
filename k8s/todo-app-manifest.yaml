@@ -16,7 +16,7 @@ spec:
       serviceAccountName: todo-app-sa # Associa il ServiceAccount con privilegi elevati
       containers:
       - name: web-app
-        image: danielbellantuono/wiz-todo-app:latest # Verrà aggiornato dinamicamente dalla pipeline
+        image: danielbellantuono/wiz-todo-app:latest
         ports:
         - containerPort: 3000
         env:
