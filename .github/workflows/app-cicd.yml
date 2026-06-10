@@ -20,7 +20,7 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Build e Push dell'immagine del Container
+      - name: Build e Push dell'immagine container
         uses: docker/build-push-action@v4
         with:
           context: .
@@ -36,7 +36,7 @@ jobs:
     needs: build-and-push
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout dei manifesti YAML
+      - name: Checkout manifest
         uses: actions/checkout@v3
 
       - name: Configura credenziali AWS
@@ -46,17 +46,14 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-east-1
 
-      - name: Genera Kubeconfig per EKS
+      - name: Genera Kubeconfig
         run: aws eks update-kubeconfig --name wiz-demo-cluster
 
-      # Sostituzione del tag dell'immagine nel manifesto con quello appena buildato + applica su Kubernetes
       - name: Deploy dei manifesti su Kubernetes
         run: |
-          # Aggiorna il file deployment con il tag specifico del commit corrente
+          # Aggiorna tag su deployment
           sed -i 's|image: .*|image: ${{ secrets.DOCKERHUB_USERNAME }}/wiz-todo-app:${{ github.sha }}|g' k8s/todo-app-manifest.yaml
           
-          # Applica i manifesti (Deployment, ServiceAccount con ClusterAdmin, Ingress)
           kubectl apply -f k8s/todo-app-manifest.yaml
           
-          # Forza Kubernetes ad attendere che il rollout del nuovo container sia completato
           kubectl rollout status deployment/todo-web-app --timeout=60s
