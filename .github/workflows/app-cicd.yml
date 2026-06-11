@@ -39,6 +39,13 @@ jobs:
           severity: 'CRITICAL,HIGH'
           exit-code: '1'
 
+      - name: SBOM
+        uses: anchore/sbom-action@v0
+        with:
+          image: ${{ secrets.DOCKERHUB_USERNAME }}/wiz-todo-app:${{ github.sha }}
+          format: 'cyclonedx-json'
+          output-file: 'sbom.json'
+
   # STEP 2: TRIGGER KUBERNETES DEPLOYMENT
   deploy-to-kubernetes:
     needs: build-and-push
