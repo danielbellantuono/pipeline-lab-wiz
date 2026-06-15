@@ -3,6 +3,8 @@ name: "Wiz-lab - Appication CI/CD"
 on:
   push:
     branches: [main, devtest]
+  pull_request:
+    branches: [main, devtest]
 
 jobs:
   # STEP 1: BUILD & PUSH TO REGISTRY
@@ -28,6 +30,21 @@ jobs:
           tags: |
             ${{ secrets.DOCKERHUB_USERNAME }}/wiz-todo-app:latest
             ${{ secrets.DOCKERHUB_USERNAME }}/wiz-todo-app:${{ github.sha }}
+
+      - name: SBOM
+        uses: anchore/sbom-action@v0
+        with:
+          image: ${{ secrets.DOCKERHUB_USERNAME }}/wiz-todo-app:${{ github.sha }}
+          format: 'cyclonedx-json'
+          output-file: 'sbom.json'
+
+      - name: Image scanning with Trivy
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: '${{ secrets.DOCKERHUB_USERNAME }}/wiz-todo-app:${{ github.sha }}'
+          format: 'table'
+          severity: 'CRITICAL,HIGH'
+          exit-code: '0' # bypass
 
   # STEP 2: TRIGGER KUBERNETES DEPLOYMENT
   deploy-to-kubernetes:
