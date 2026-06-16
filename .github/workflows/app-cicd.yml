@@ -2,9 +2,9 @@ name: "Wiz-lab - Appication CI/CD"
 
 on:
   push:
-    branches: [main, devtest]
+    branches: [main, devtest, secured-pipeline]
   pull_request:
-    branches: [main, devtest]
+    branches: [main, devtest, secured-pipeline]
 
 jobs:
   # STEP 1: BUILD & PUSH TO REGISTRY
