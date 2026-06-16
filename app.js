@@ -3,7 +3,6 @@ const { MongoClient } = require('mongodb');
 const app = express();
 const port = 3000;
 
-// [REQUISITO] Recupero della stringa di connessione in modo sicuro dalle Environment Variables
 const mongoUri = process.env.MONGO_URI;
 
 if (!mongoUri) {
@@ -14,11 +13,10 @@ if (!mongoUri) {
 let dbClient;
 let todoCollection;
 
-// Configurazione Express
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Funzione di connessione al Database con meccanismo di retry
+// connessione db
 async function connectWithRetry() {
     console.log(`Tentativo di connessione a MongoDB su: ${mongoUri.replace(/:([^:@\s]+)@/, ':****@')}`); // Maschera la password nei log!
     try {
@@ -48,11 +46,11 @@ app.get('/', async (req, res) => {
         }
         const todos = await todoCollection.find({}).toArray();
         
-        // Semplice interfaccia HTML per il Panel live
+        // simple html interface
         let html = `
             <html>
             <head>
-                <title>Wiz Secure Pipeline Exercise</title>
+                <title>Wiz Secure Pipeline</title>
                 <style>
                     body { font-family: Arial, sans-serif; margin: 40px; background-color: #f4f6f9; color: #333; }
                     .container { max-width: 600px; margin: auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
@@ -101,7 +99,7 @@ app.post('/add', async (req, res) => {
     }
 });
 
-// Health check endpoint (Fondamentale per i K8s Probes o l'ALB Target Group)
+// Health check endpoint - per ALB
 app.get('/health', (req, res) => {
     if (todoCollection) {
         res.status(200).json({ status: "UP", database: "CONNECTED" });

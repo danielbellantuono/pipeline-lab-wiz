@@ -13,14 +13,13 @@ spec:
       labels:
         app: todo-web-app
     spec:
-      serviceAccountName: todo-app-sa # Associa il ServiceAccount con privilegi elevati
+      serviceAccountName: todo-app-sa # SA cluster-wide associazione
       containers:
       - name: web-app
         image: danielbellantuono/wiz-todo-app:latest
         ports:
         - containerPort: 3000
         env:
-        # [REQUISITO] Configurazione accesso MongoDB via Environment Variable usando il DNS interno di K8s
         - name: MONGO_URI
           value: "mongodb://admin:W1zL4bP4n3l2026!@mongodb-service:27017/wizdb?authSource=admin"
 
@@ -39,7 +38,10 @@ spec:
     app: todo-web-app
 
 ---
-# [REQUISITO] ServiceAccount + Cluster-wide Admin Role (Vulnerabilità per Wiz)
+########################
+### VULNERABILITA' 6 ###
+########################
+
 apiVersion: v1
 kind: ServiceAccount
 metadata:
@@ -61,7 +63,7 @@ roleRef:
   apiGroup: rbac.authorization.k8s.io
 
 ---
-# [REQUISITO] Esposizione via Kubernetes Ingress e CSP Load Balancer
+# Esposizione via Kubernetes Ingress
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
@@ -83,7 +85,7 @@ spec:
               number: 80
 
 ---
-# Kube to VM AWS Route53
+# Kube to AWS Route53
 apiVersion: v1
 kind: Service
 metadata:
