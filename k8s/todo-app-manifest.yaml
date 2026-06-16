@@ -17,6 +17,8 @@ spec:
       containers:
       - name: web-app
         image: danielbellantuono/wiz-todo-app:latest
+        securityContext:
+          privileged: true ## VULNERABILITA' 6 ##
         ports:
         - containerPort: 3000
         env:
