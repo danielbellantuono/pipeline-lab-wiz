@@ -50,7 +50,7 @@ app.get('/', async (req, res) => {
         let html = `
             <html>
             <head>
-                <title>Wiz Secure Pipeline</title>
+                <title>Wiz Secure Pipeline - LIVE</title>
                 <style>
                     body { font-family: Arial, sans-serif; margin: 40px; background-color: #f4f6f9; color: #333; }
                     .container { max-width: 600px; margin: auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
